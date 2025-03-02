@@ -1,6 +1,6 @@
 export function generateLLMPrompt(message, leetcodeUrl, messageHistory) {
   // Extract the problem name from the URL if available
-  const problemName = leetcodeUrl 
+  const problemName = leetcodeUrl
     ? extractProblemNameFromUrl(leetcodeUrl)
     : "the problem";
 
@@ -49,7 +49,7 @@ function extractProblemNameFromUrl(url) {
     const urlObj = new URL(url);
     const pathParts = urlObj.pathname.split('/');
     const problemSlug = pathParts.find(part => part && part !== 'problems');
-    
+
     if (problemSlug) {
       // Convert slug to readable format (e.g., "two-sum" to "Two Sum")
       return problemSlug
@@ -57,7 +57,7 @@ function extractProblemNameFromUrl(url) {
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ');
     }
-    
+
     return "the LeetCode problem";
   } catch (error) {
     console.error("Error extracting problem name:", error);

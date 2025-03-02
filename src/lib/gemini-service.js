@@ -1,46 +1,42 @@
+// lib/gemini-service.js
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // Initialize the Gemini API client
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_API_KEY);
 
-export async function getGeminiResponse(prompt, messageHistory = []) {
+export async function getGeminiStreamingResponse(prompt, messageHistory = []) {
     try {
-        // Get the generative model with the correct model name
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
-        // Check if we have message history
-        if (messageHistory.length > 0) {
-            // Filter out system messages and ensure proper formatting
-            const formattedHistory = messageHistory
-                .filter(msg => msg.sender !== "system")
-                .map(msg => ({
-                    role: msg.sender === "user" ? "user" : "model",
-                    parts: [{ text: msg.content }]
-                }));
-
-            // Ensure the first message is from the user
-            if (formattedHistory.length > 0 && formattedHistory[0].role === "user") {
-                // Start a chat session with history
-                const chat = model.startChat({
-                    history: formattedHistory,
-                    generationConfig: {
-                        temperature: 0.7,
-                        topP: 0.8,
-                        topK: 40,
-                    },
-                });
-
-                // Generate a response
-                const result = await chat.sendMessage(prompt);
-                return result.response.text();
+        // Get the generative model
+        const model = genAI.getGenerativeModel({
+            model: "gemini-1.5-flash",
+            generationConfig: {
+                temperature: 0.7,
+                topP: 0.8,
+                topK: 40,
             }
+        });
+
+        // If we have message history, include it in the prompt
+        let fullPrompt = prompt;
+
+        if (messageHistory.length > 0) {
+            const conversationContext = messageHistory
+                .filter(msg => msg.sender !== "system")
+                .map(msg => `${msg.sender.toUpperCase()}: ${msg.content}`)
+                .join("\n\n");
+
+            fullPrompt = `
+        Previous conversation:
+        ${conversationContext}
+        
+        Now, respond to this: ${prompt}
+      `;
         }
 
-        // If we don't have valid history, just send a single message
-        const result = await model.generateContent(prompt);
-        return result.response.text();
+        // Generate content with streaming enabled
+        return await model.generateContentStream(fullPrompt);
     } catch (error) {
         console.error("Error calling Gemini API:", error);
-        throw new Error("Failed to get response from Gemini");
+        throw new Error("Failed to get streaming response from Gemini");
     }
 }

@@ -195,3 +195,19 @@
 .markdown-container th {
   background-color: rgba(110, 118, 129, 0.1);
 }
+
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.animate-pulse {
+  animation: blink 1s infinite;
+}
