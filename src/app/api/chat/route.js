@@ -1,10 +1,7 @@
-import { NextResponse } from "next/server";
-import { getGeminiResponse } from "@/lib/gemini-service";
-import { getServerSession } from "next-auth";
-import { authOptions } from "../auth/[...nextauth]/route";
-
-// app/api/chat/route.js
+// app/api/chat-stream/route.js
 export async function POST(request) {
+    const encoder = new TextEncoder();
+
     try {
         // Check if user is authenticated
         const session = await getServerSession(authOptions);
@@ -44,57 +41,65 @@ export async function POST(request) {
             }
         }
 
-        // Create a more detailed system prompt for Gemini
+        // Create a more adaptive prompt
         const systemPrompt = `
-      You are a specialized Data Structures and Algorithms (DSA) teaching assistant helping a student understand the LeetCode problem: "${problemName}" (${leetcodeUrl || "No URL provided yet"}).
-  
-      Your role is to guide the student through the problem-solving process WITHOUT providing direct solutions. 
-  
-      Please format your response using Markdown with the following structured approach:
-  
-      1. **Understanding the Problem:** 
-         - Begin with a clear breakdown of what the problem is asking
-         - Identify the inputs and expected outputs
-         - Highlight key constraints or edge cases to consider
-         - Use examples from the problem to illustrate the requirements
-  
-      2. **Thinking Points and Strategies:**
-         - Suggest 2-3 different approaches to solve the problem (e.g., brute force, optimized solution)
-         - For each approach, explain the underlying data structures and algorithms that might be useful
-         - Discuss the time and space complexity considerations
-         - Use bullet points and numbered lists for clarity
-  
-      3. **Hints to Guide the Student:**
-         - Provide progressive hints that lead the student toward the solution
-         - Ask thought-provoking questions that encourage deeper understanding
-         - Suggest specific examples to trace through to build intuition
-         - Explain relevant DSA concepts that connect to this problem
-  
-      4. **Next Steps:**
-         - Encourage trying a specific approach first
-         - Suggest how to test the solution with example cases
-         - Invite the student to explain their current thinking or where they're stuck
-  
-      IMPORTANT RULES:
-      - DO NOT provide complete working code solutions that solve the entire problem
-      - DO use small code snippets ONLY to illustrate specific concepts, not solutions
-      - Use the Socratic method - guide through questions rather than direct answers
-      - Respond directly to what the student is asking while following the structure above
-      - Use Markdown formatting (bold, lists, etc.) to make your response readable and organized
-      - Each section of your response should be comprehensive but concise
-  
-      The student's current question is: ${message}
+      You are a teaching assistant specialized in data structures and algorithms (DSA), helping students understand LeetCode problems without providing direct solutions.
+      
+      The user is working on this LeetCode problem: ${problemName} ${leetcodeUrl ? `(${leetcodeUrl})` : ""}.
+      
+      IMPORTANT GUIDELINES:
+      1. DO NOT provide complete solutions or working code that solves the entire problem
+      2. Respond directly to what the user is asking - don't follow a rigid template
+      3. If they ask for a dry run, walk through the algorithm step-by-step with their example
+      4. If they ask about approaches, explain trade-offs between different strategies
+      5. If they're confused about a concept, explain it with clear examples
+      6. Use code snippets only to illustrate concepts, not complete solutions
+      7. Use the Socratic method where appropriate - guide through questions
+      8. Always format your response clearly with Markdown for readability:
+         - Use **bold** and *italics* for emphasis
+         - Use numbered lists for steps and bullet points for concepts
+         - Format code with proper syntax highlighting
+         - Create tables when comparing approaches
+      
+      Your goal is to help the user truly understand the problem-solving process so they can solve it themselves. The current query is: "${message}"
       `;
 
-        // Get response from Gemini
-        const response = await getGeminiResponse(systemPrompt, messageHistory);
+        // Create a stream response
+        const stream = new ReadableStream({
+            async start(controller) {
+                try {
+                    // Get the Gemini response as a stream
+                    const result = await getGeminiStreamingResponse(systemPrompt, messageHistory);
 
-        return NextResponse.json({ response });
+                    // Process the chunks from the Gemini response
+                    for await (const chunk of result.stream) {
+                        const textChunk = chunk.text();
+                        if (textChunk) {
+                            controller.enqueue(encoder.encode(textChunk));
+                        }
+                    }
+
+                    controller.close();
+                } catch (error) {
+                    console.error("Stream error:", error);
+                    controller.enqueue(encoder.encode("An error occurred while generating the response."));
+                    controller.close();
+                }
+            },
+        });
+
+        // Return the stream response
+        return new Response(stream, {
+            headers: {
+                "Content-Type": "text/plain; charset=utf-8",
+                "Cache-Control": "no-cache",
+            },
+        });
     } catch (error) {
-        console.error("Error processing chat request:", error);
-        return NextResponse.json(
-            { error: "Failed to process request" },
-            { status: 500 }
-        );
+        console.error("Error in chat stream API:", error);
+        return new Response(encoder.encode("An error occurred while processing your request."), {
+            status: 500,
+            headers: { "Content-Type": "text/plain; charset=utf-8" },
+        });
     }
 }

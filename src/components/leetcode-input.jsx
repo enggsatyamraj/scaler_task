@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-import { Card, CardContent } from "./ui/card";
 
 export default function LeetcodeInput({ onSubmit }) {
     const [url, setUrl] = useState("");
@@ -23,24 +22,23 @@ export default function LeetcodeInput({ onSubmit }) {
     };
 
     return (
-        <Card className="mb-4">
-            <CardContent className="pt-4">
-                <form onSubmit={handleSubmit} className="flex flex-col space-y-2">
-                    <div className="flex items-center space-x-2">
-                        <Input
-                            type="text"
-                            placeholder="Enter LeetCode problem URL"
-                            value={url}
-                            onChange={(e) => setUrl(e.target.value)}
-                            className="flex-1"
-                        />
-                        <Button type="submit">Set Problem</Button>
-                    </div>
-                    <p className="text-xs text-muted-foreground">
-                        Example: https://leetcode.com/problems/two-sum/
-                    </p>
-                </form>
-            </CardContent>
-        </Card>
+        <form onSubmit={handleSubmit} className="flex flex-col space-y-2">
+            <Input
+                type="text"
+                placeholder="Enter LeetCode problem URL"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                className="bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700"
+            />
+            <Button
+                type="submit"
+                className="w-full"
+            >
+                Set Problem
+            </Button>
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+                Example: https://leetcode.com/problems/two-sum/
+            </p>
+        </form>
     );
 }

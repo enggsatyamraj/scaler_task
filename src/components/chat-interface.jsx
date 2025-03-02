@@ -6,6 +6,8 @@ import MessageList from "./message-list";
 import MessageInput from "./message-input";
 import LeetcodeInput from "./leetcode-input";
 import { Card, CardContent } from "./ui/card";
+import { BookOpen, Code2, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function ChatInterface() {
     const { data: session } = useSession();
@@ -97,19 +99,65 @@ export default function ChatInterface() {
     ];
 
     return (
-        <Card className="w-full">
-            <CardContent className="p-4">
-                <div className="flex flex-col h-[80vh]">
-                    <LeetcodeInput onSubmit={handleSetLeetcodeUrl} />
+        <div className="flex flex-col h-[calc(100vh-80px)]">
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-4">
+                <div className="lg:col-span-1">
+                    <Card className="border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
+                        <CardContent className="p-4">
+                            <div className="flex items-center gap-2 mb-4">
+                                <Code2 className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+                                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Active Problem</h2>
+                            </div>
+                            <LeetcodeInput onSubmit={handleSetLeetcodeUrl} />
 
-                    <div className="flex-1 overflow-y-auto mb-4 mt-4">
-                        <MessageList messages={allMessages} />
-                        <div ref={messagesEndRef} />
-                    </div>
-
-                    <MessageInput onSendMessage={handleSendMessage} isLoading={isLoading} />
+                            {leetcodeUrl && (
+                                <div className="mt-4">
+                                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Current problem:</div>
+                                    <div className="p-3 bg-gray-100 dark:bg-gray-800 rounded-md border border-gray-200 dark:border-gray-700 text-sm text-gray-700 dark:text-gray-300 break-all">
+                                        {leetcodeUrl}
+                                    </div>
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
                 </div>
-            </CardContent>
-        </Card>
+                <div className="lg:col-span-3">
+                    <Card className={cn(
+                        "bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 transition-all duration-300",
+                        isStreaming ? "shadow-md border-gray-300 dark:border-gray-700" : ""
+                    )}>
+                        <CardContent className="p-0">
+                            <div className="flex flex-col h-[calc(100vh-160px)]">
+                                {isStreaming && (
+                                    <div className="px-4 py-2 bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center gap-2">
+                                        <Loader2 className="h-4 w-4 text-gray-700 dark:text-gray-300 animate-spin" />
+                                        <span className="text-sm text-gray-700 dark:text-gray-300">Generating response...</span>
+                                    </div>
+                                )}
+
+                                <div className="flex-1 overflow-y-auto p-4">
+                                    {allMessages.length === 0 ? (
+                                        <div className="h-full flex flex-col items-center justify-center text-center p-6">
+                                            <BookOpen className="h-16 w-16 text-gray-300 dark:text-gray-700 mb-4" />
+                                            <h3 className="text-xl font-medium text-gray-600 dark:text-gray-400 mb-2">Your DSA Assistant is Ready</h3>
+                                            <p className="text-gray-500 dark:text-gray-500 max-w-md">
+                                                Set a LeetCode problem URL and start asking questions about algorithms, approaches, or specific concepts.
+                                            </p>
+                                        </div>
+                                    ) : (
+                                        <MessageList messages={allMessages} />
+                                    )}
+                                    <div ref={messagesEndRef} />
+                                </div>
+
+                                <div className="border-t border-gray-200 dark:border-gray-800 p-4">
+                                    <MessageInput onSendMessage={handleSendMessage} isLoading={isLoading} />
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+            </div>
+        </div>
     );
 }

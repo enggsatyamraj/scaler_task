@@ -128,86 +128,81 @@
   }
 }
 
-/* Enhance markdown styling */
-.markdown-container h1,
-.markdown-container h2,
-.markdown-container h3,
-.markdown-container h4 {
+@keyframes animate-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-in {
+  animation: animate-in 0.3s ease-out;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.hide-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.prose {
+  max-width: none;
+}
+
+.prose pre {
+  background-color: transparent;
+  border-radius: 0.375rem;
+  padding: 0;
+  margin: 0;
+}
+
+.prose code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+}
+
+/* Light mode markdown styles */
+.prose code {
+  color: #1a202c;
+  background-color: #edf2f7;
+  padding: 0.2em 0.4em;
+  border-radius: 0.25em;
+  font-size: 0.875em;
+}
+
+.prose pre code {
+  background-color: transparent;
+  padding: 0;
+}
+
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4 {
+  color: #1a202c;
   font-weight: 700;
   margin-top: 1.5em;
   margin-bottom: 0.5em;
 }
 
-.markdown-container ul,
-.markdown-container ol {
-  padding-left: 1.5em;
-  margin: 1em 0;
+/* Dark mode markdown styles */
+.dark .prose code {
+  color: #e2e8f0;
+  background-color: #2d3748;
 }
 
-.markdown-container li {
-  margin-bottom: 0.5em;
-}
-
-.markdown-container pre {
-  background-color: #1a1a1a;
-  border-radius: 0.5em;
-  overflow-x: auto;
-  padding: 1em;
-  margin: 1em 0;
-}
-
-.markdown-container code {
-  font-family: monospace;
-  padding: 0.2em 0.4em;
-  border-radius: 0.25em;
-  background-color: rgba(110, 118, 129, 0.1);
-}
-
-.markdown-container pre code {
-  background-color: transparent;
-  padding: 0;
-}
-
-.markdown-container blockquote {
-  border-left: 3px solid #6b7280;
-  padding-left: 1em;
-  margin: 1em 0;
-  color: #6b7280;
-}
-
-.markdown-container img {
-  max-width: 100%;
-  height: auto;
-}
-
-.markdown-container table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 1em 0;
-}
-
-.markdown-container th,
-.markdown-container td {
-  border: 1px solid #6b7280;
-  padding: 0.5em;
-}
-
-.markdown-container th {
-  background-color: rgba(110, 118, 129, 0.1);
-}
-
-@keyframes blink {
-  0% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-.animate-pulse {
-  animation: blink 1s infinite;
+.dark .prose h1,
+.dark .prose h2,
+.dark .prose h3,
+.dark .prose h4 {
+  color: #f7fafc;
 }
