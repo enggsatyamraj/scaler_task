@@ -4,7 +4,7 @@ A sophisticated chat application designed to provide guided assistance for data 
 
 <img width="1000" alt="Screenshot 2025-03-02 at 5 57 11 PM" src="https://github.com/user-attachments/assets/63f0c2a2-ac33-441b-bfae-a10e133e7848" />
 
-<img width="1710" alt="Screenshot 2025-03-02 at 5 58 29 PM" src="https://github.com/user-attachments/assets/50970d2f-f692-48d8-ba16-b9cfb977d1e9" />
+<img width="1000" alt="Screenshot 2025-03-02 at 5 58 29 PM" src="https://github.com/user-attachments/assets/50970d2f-f692-48d8-ba16-b9cfb977d1e9" />
 
 ## 🚀 Features
 
