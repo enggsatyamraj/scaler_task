@@ -2,7 +2,9 @@
 
 A sophisticated chat application designed to provide guided assistance for data structures and algorithms (DSA) problems. This application helps users understand and solve LeetCode problems by offering hints, explanations, and intuition-building guidance without revealing complete solutions.
 
-![DSA Learning Assistant](https://repository-images.githubusercontent.com/716616497/fbd0b8f7-4eec-4271-9085-e981d96ce614)
+<img width="1000" alt="Screenshot 2025-03-02 at 5 57 11 PM" src="https://github.com/user-attachments/assets/63f0c2a2-ac33-441b-bfae-a10e133e7848" />
+
+<img width="1710" alt="Screenshot 2025-03-02 at 5 58 29 PM" src="https://github.com/user-attachments/assets/50970d2f-f692-48d8-ba16-b9cfb977d1e9" />
 
 ## 🚀 Features
 
