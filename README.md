@@ -18,7 +18,7 @@ A sophisticated chat application designed to provide guided assistance for data 
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: Next.js 14, React, TailwindCSS
+- **Frontend**: Next.js 15, React, TailwindCSS
 - **UI Components**: shadcn/ui
 - **Authentication**: NextAuth.js with Google provider
 - **AI Integration**: Google Gemini AI API
